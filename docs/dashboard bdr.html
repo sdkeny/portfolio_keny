@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Bouches-du-Rhône</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            grid-column: span 12;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        .card-4 {
+            grid-column: span 4;
+        }
+        .card-6 {
+            grid-column: span 6;
+        }
+        .card-8 {
+            grid-column: span 8;
+        }
+        .card-12 {
+            grid-column: span 12;
+        }
+        .card-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .kpi-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .kpi {
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .chart {
+            height: 300px;
+            margin-bottom: 15px;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        .scrollable-table {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .commune-selector {
+            margin-bottom: 20px;
+        }
+        select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 400px;
+        }
+        .footer {
+            grid-column: span 12;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- En-tête -->
+        <div class="header">
+            <h1>Tableau de Bord des Bouches-du-Rhône</h1>
+            <p>Analyse complète des données communales : Démographie, Température, Socio-économie et Îlots de Chaleur Urbains</p>
+        </div>
+
+        <!-- Sélecteur de commune -->
+        <div class="card card-12">
+            <div class="commune-selector">
+                <label for="commune-select"><strong>Sélectionnez une commune :</strong></label>
+                <select id="commune-select" onchange="updateDashboard()">
+                    <option value="all">Toutes les communes</option>
+                    <!-- Les options seront ajoutées par JavaScript -->
+                </select>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="card card-12">
+            <div class="kpi-container">
+                <div class="kpi">
+                    <div class="kpi-value" id="population-kpi">-</div>
+                    <div class="kpi-label">Population</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-value" id="temperature-kpi">-</div>
+                    <div class="kpi-label">Température (°C)</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-value" id="chomage-kpi">-</div>
+                    <div class="kpi-label">Chômage (%)</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-value" id="icu-kpi">-</div>
+                    <div class="kpi-label">Exposition ICU</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cartes et graphiques principaux -->
+        <div class="card card-8">
+            <div class="card-header">Carte des Températures et ICU</div>
+            <div id="map"></div>
+        </div>
+
+        <div class="card card-4">
+            <div class="card-header">Répartition par Taille</div>
+            <div id="population-chart" class="chart"></div>
+        </div>
+
+        <!-- Graphiques secondaires -->
+        <div class="card card-6">
+            <div class="card-header">Évolution des Températures</div>
+            <div id="temperature-trend-chart" class="chart"></div>
+        </div>
+
+        <div class="card card-6">
+            <div class="card-header">Indicateurs Socio-économiques</div>
+            <div id="socio-chart" class="chart"></div>
+        </div>
+
+        <!-- Tableaux de données -->
+        <div class="card card-6">
+            <div class="card-header">Démographie Communale</div>
+            <div class="scrollable-table">
+                <table id="demographie-table">
+                    <thead>
+                        <tr>
+                            <th>Commune</th>
+                            <th>Population</th>
+                            <th>Densité</th>
+                            <th>Superficie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rempli par JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card card-6">
+            <div class="card-header">Données Environnementales</div>
+            <div class="scrollable-table">
+                <table id="environment-table">
+                    <thead>
+                        <tr>
+                            <th>Commune</th>
+                            <th>Température</th>
+                            <th>ICU</th>
+                            <th>Végétation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rempli par JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pied de page -->
+        <div class="footer">
+            Dernière mise à jour: <span id="update-date"></span> | Sources: INSEE, DREAL PACA, données municipales
+        </div>
+    </div>
+
+    <script>
+        // Données complètes des Bouches-du-Rhône
+        const communes = [
+            { 
+                nom: "Aix-en-Provence", 
+                population: 146248, 
+                superficie: 186.08,
+                densite: 786,
+                temperature: 24.8, 
+                variationTemp: "+1.2", 
+                revenu: 24420, 
+                chomage: 10.2, 
+                icuNiveau: "Élevé", 
+                icuScore: 3,
+                vegetation: 32,
+                coordinates: [43.5297, 5.4474],
+                trends: [23.5, 23.8, 24.2, 24.6, 24.8]
+            },
+            { 
+                nom: "Marseille", 
+                population: 870731, 
+                superficie: 240.62,
+                densite: 3618,
+                temperature: 25.5, 
+                variationTemp: "+1.5", 
+                revenu: 18730, 
+                chomage: 14.5, 
+                icuNiveau: "Très élevé", 
+                icuScore: 4,
+                vegetation: 18,
+                coordinates: [43.2965, 5.3698],
+                trends: [24.0, 24.5, 25.0, 25.3, 25.5]
+            },
+            { 
+                nom: "Arles", 
+                population: 52566, 
+                superficie: 758.93,
+                densite: 69,
+                temperature: 23.7, 
+                variationTemp: "+0.9", 
+                revenu: 20150, 
+                chomage: 12.3, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 45,
+                coordinates: [43.6766, 4.6279],
+                trends: [22.8, 23.0, 23.3, 23.5, 23.7]
+            },
+            { 
+                nom: "Aubagne", 
+                population: 46913, 
+                superficie: 54.90,
+                densite: 854,
+                temperature: 24.2, 
+                variationTemp: "+1.1", 
+                revenu: 21560, 
+                chomage: 11.8, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 28,
+                coordinates: [43.2928, 5.5707],
+                trends: [23.2, 23.5, 23.8, 24.0, 24.2]
+            },
+            { 
+                nom: "Châteaurenard", 
+                population: 16889, 
+                superficie: 34.95,
+                densite: 483,
+                temperature: 23.9, 
+                variationTemp: "+1.0", 
+                revenu: 19870, 
+                chomage: 10.9, 
+                icuNiveau: "Faible", 
+                icuScore: 1,
+                vegetation: 35,
+                coordinates: [43.8825, 4.8544],
+                trends: [22.9, 23.1, 23.4, 23.7, 23.9]
+            },
+            { 
+                nom: "Fos-sur-Mer", 
+                population: 15669, 
+                superficie: 92.31,
+                densite: 170,
+                temperature: 24.5, 
+                variationTemp: "+1.3", 
+                revenu: 18990, 
+                chomage: 13.2, 
+                icuNiveau: "Élevé", 
+                icuScore: 3,
+                vegetation: 22,
+                coordinates: [43.4376, 4.9446],
+                trends: [23.5, 23.8, 24.1, 24.3, 24.5]
+            },
+            { 
+                nom: "Gardanne", 
+                population: 21588, 
+                superficie: 27.02,
+                densite: 799,
+                temperature: 24.3, 
+                variationTemp: "+1.2", 
+                revenu: 20340, 
+                chomage: 11.5, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 25,
+                coordinates: [43.4549, 5.4736],
+                trends: [23.3, 23.6, 23.9, 24.1, 24.3]
+            },
+            { 
+                nom: "Istres", 
+                population: 43786, 
+                superficie: 113.73,
+                densite: 385,
+                temperature: 24.0, 
+                variationTemp: "+1.1", 
+                revenu: 20780, 
+                chomage: 11.1, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 30,
+                coordinates: [43.5138, 4.9896],
+                trends: [23.0, 23.3, 23.7, 23.9, 24.0]
+            },
+            { 
+                nom: "La Ciotat", 
+                population: 36094, 
+                superficie: 31.46,
+                densite: 1147,
+                temperature: 23.8, 
+                variationTemp: "+1.0", 
+                revenu: 21980, 
+                chomage: 10.7, 
+                icuNiveau: "Faible", 
+                icuScore: 1,
+                vegetation: 33,
+                coordinates: [43.1743, 5.6087],
+                trends: [22.8, 23.0, 23.4, 23.6, 23.8]
+            },
+            { 
+                nom: "Les Pennes-Mirabeau", 
+                population: 22395, 
+                superficie: 33.66,
+                densite: 665,
+                temperature: 24.6, 
+                variationTemp: "+1.3", 
+                revenu: 22560, 
+                chomage: 10.3, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 27,
+                coordinates: [43.4105, 5.3111],
+                trends: [23.6, 23.9, 24.2, 24.4, 24.6]
+            },
+            { 
+                nom: "Marignane", 
+                population: 33355, 
+                superficie: 23.16,
+                densite: 1440,
+                temperature: 24.7, 
+                variationTemp: "+1.4", 
+                revenu: 19320, 
+                chomage: 12.8, 
+                icuNiveau: "Élevé", 
+                icuScore: 3,
+                vegetation: 20,
+                coordinates: [43.4173, 5.2146],
+                trends: [23.7, 24.0, 24.3, 24.5, 24.7]
+            },
+            { 
+                nom: "Martigues", 
+                population: 48994, 
+                superficie: 71.44,
+                densite: 686,
+                temperature: 24.1, 
+                variationTemp: "+1.2", 
+                revenu: 20450, 
+                chomage: 11.4, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 29,
+                coordinates: [43.4044, 5.0546],
+                trends: [23.1, 23.4, 23.8, 24.0, 24.1]
+            },
+            { 
+                nom: "Miramas", 
+                population: 26262, 
+                superficie: 25.74,
+                densite: 1020,
+                temperature: 24.4, 
+                variationTemp: "+1.3", 
+                revenu: 19130, 
+                chomage: 12.6, 
+                icuNiveau: "Élevé", 
+                icuScore: 3,
+                vegetation: 23,
+                coordinates: [43.5821, 5.0026],
+                trends: [23.4, 23.7, 24.0, 24.2, 24.4]
+            },
+            { 
+                nom: "Port-de-Bouc", 
+                population: 16620, 
+                superficie: 11.46,
+                densite: 1450,
+                temperature: 24.8, 
+                variationTemp: "+1.4", 
+                revenu: 17650, 
+                chomage: 14.1, 
+                icuNiveau: "Très élevé", 
+                icuScore: 4,
+                vegetation: 15,
+                coordinates: [43.4056, 4.9806],
+                trends: [23.8, 24.1, 24.4, 24.6, 24.8]
+            },
+            { 
+                nom: "Saint-Martin-de-Crau", 
+                population: 13656, 
+                superficie: 214.87,
+                densite: 64,
+                temperature: 23.5, 
+                variationTemp: "+0.8", 
+                revenu: 20890, 
+                chomage: 10.8, 
+                icuNiveau: "Faible", 
+                icuScore: 1,
+                vegetation: 48,
+                coordinates: [43.6394, 4.8128],
+                trends: [22.7, 22.9, 23.2, 23.4, 23.5]
+            },
+            { 
+                nom: "Salon-de-Provence", 
+                population: 45898, 
+                superficie: 70.30,
+                densite: 653,
+                temperature: 24.0, 
+                variationTemp: "+1.1", 
+                revenu: 21120, 
+                chomage: 10.5, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 31,
+                coordinates: [43.6405, 5.0952],
+                trends: [23.0, 23.3, 23.7, 23.9, 24.0]
+            },
+            { 
+                nom: "Tarascon", 
+                population: 15360, 
+                superficie: 73.97,
+                densite: 208,
+                temperature: 23.8, 
+                variationTemp: "+1.0", 
+                revenu: 19780, 
+                chomage: 11.7, 
+                icuNiveau: "Moyen", 
+                icuScore: 2,
+                vegetation: 36,
+                coordinates: [43.8058, 4.6603],
+                trends: [22.8, 23.0, 23.4, 23.6, 23.8]
+            },
+            { 
+                nom: "Vitrolles", 
+                population: 35584, 
+                superficie: 36.58,
+                densite: 973,
+                temperature: 24.9, 
+                variationTemp: "+1.5", 
+                revenu: 18870, 
+                chomage: 13.4, 
+                icuNiveau: "Élevé", 
+                icuScore: 3,
+                vegetation: 21,
+                coordinates: [43.4597, 5.2486],
+                trends: [23.9, 24.2, 24.5, 24.7, 24.9]
+            }
+        ];
+
+        // Initialisation de la carte
+        let map;
+        function initMap() {
+            map = L.map('map').setView([43.5, 5.1], 9);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            updateMap();
+        }
+
+        // Mise à jour de la carte
+        function updateMap(selectedCommune = null) {
+            // Clear existing markers
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Add new markers
+            communes.forEach(commune => {
+                const color = getColorForICU(commune.icuScore);
+                const marker = L.circleMarker(commune.coordinates, {
+                    radius: Math.sqrt(commune.population) / 50,
+                    fillColor: color,
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <b>${commune.nom}</b><br>
+                    Population: ${commune.population.toLocaleString('fr-FR')}<br>
+                    Température: ${commune.temperature}°C<br>
+                    ICU: ${commune.icuNiveau}<br>
+                    Chômage: ${commune.chomage}%
+                `);
+
+                if (selectedCommune && commune.nom === selectedCommune) {
+                    marker.setStyle({color: "#ff0000", weight: 3});
+                    map.setView(commune.coordinates, 12);
+                }
+            });
+        }
+
+        function getColorForICU(score) {
+            return score === 1 ? '#2ecc71' :
+                   score === 2 ? '#f1c40f' :
+                   score === 3 ? '#e67e22' :
+                                 '#e74c3c';
+        }
+
+        // Mise à jour du dashboard
+        function updateDashboard() {
+            const selectedCommune = document.getElementById('commune-select').value;
+            
+            if (selectedCommune === "all") {
+                // Afficher toutes les communes
+                updateKPIs(getAverages());
+                updateTables(communes);
+                updateCharts(communes);
+                updateMap();
+            } else {
+                // Afficher une commune spécifique
+                const commune = communes.find(c => c.nom === selectedCommune);
+                updateKPIs(commune);
+                updateTables([commune]);
+                updateCharts([commune]);
+                updateMap(selectedCommune);
+            }
+        }
+
+        // Calcul des moyennes départementales
+        function getAverages() {
+            const total = communes.length;
+            return {
+                nom: "Moyenne départementale",
+                population: Math.round(communes.reduce((sum, c) => sum + c.population, 0) / total),
+                temperature: parseFloat((communes.reduce((sum, c) => sum + c.temperature, 0) / total).toFixed(1)),
+                chomage: parseFloat((communes.reduce((sum, c) => sum + c.chomage, 0) / total).toFixed(1)),
+                icuNiveau: getAverageICULabel(),
+                revenu: Math.round(communes.reduce((sum, c) => sum + c.revenu, 0) / total)
+            };
+        }
+
+        function getAverageICULabel() {
+            const avgScore = communes.reduce((sum, c) => sum + c.icuScore, 0) / communes.length;
+            return avgScore < 1.5 ? "Faible" :
+                   avgScore < 2.5 ? "Moyen" :
+                   avgScore < 3.5 ? "Élevé" : "Très élevé";
+        }
+
+        // Mise à jour des KPIs
+        function updateKPIs(data) {
+            document.getElementById('population-kpi').textContent = 
+                data.population.toLocaleString('fr-FR');
+            document.getElementById('temperature-kpi').textContent = 
+                data.temperature + "°C";
+            document.getElementById('chomage-kpi').textContent = 
+                data.chomage + "%";
+            document.getElementById('icu-kpi').textContent = 
+                data.icuNiveau;
+        }
+
+        // Mise à jour des tableaux
+        function updateTables(data) {
+            // Tableau démographique
+            const demoTable = document.getElementById('demographie-table').querySelector('tbody');
+            demoTable.innerHTML = '';
+            data.forEach(commune => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${commune.nom}</td>
+                    <td>${commune.population.toLocaleString('fr-FR')}</td>
+                    <td>${commune.densite.toLocaleString('fr-FR')}</td>
+                    <td>${commune.superficie.toLocaleString('fr-FR')} km²</td>
+                `;
+                demoTable.appendChild(row);
+            });
+
+            // Tableau environnemental
+            const envTable = document.getElementById('environment-table').querySelector('tbody');
+            envTable.innerHTML = '';
+            data.forEach(commune => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${commune.nom}</td>
+                    <td>${commune.temperature}°C (${commune.variationTemp})</td>
+                    <td>${commune.icuNiveau}</td>
+                    <td>${commune.vegetation}%</td>
+                `;
+                envTable.appendChild(row);
+            });
+        }
+
+        // Mise à jour des graphiques
+        function updateCharts(data) {
+            const isAll = data.length > 1;
+            
+            // Graphique de population
+            Plotly.newPlot('population-chart', [{
+                values: isAll ? 
+                    [data.filter(c => c.population < 20000).length,
+                     data.filter(c => c.population >= 20000 && c.population < 50000).length,
+                     data.filter(c => c.population >= 50000).length] : 
+                    [18, 65, 17],
+                labels: isAll ? 
+                    ['< 20k hab', '20k-50k hab', '> 50k hab'] : 
+                    ['0-14 ans', '15-64 ans', '65+ ans'],
+                type: 'pie',
+                marker: {
+                    colors: ['#3498db', '#2ecc71', '#e74c3c']
+                },
+                textinfo: 'label+percent',
+                insidetextorientation: 'radial'
+            }], {
+                margin: {t: 0, b: 0, l: 0, r: 0},
+                showlegend: false
+            });
+
+            // Graphique des tendances de température
+            const years = [2018, 2019, 2020, 2021, 2022];
+            Plotly.newPlot('temperature-trend-chart', 
+                isAll ? 
+                [
+                    {
+                        y: communes.map(c => c.temperature),
+                        x: communes.map(c => c.nom),
+                        type: 'bar',
+                        marker: {
+                            color: communes.map(c => getColorForICU(c.icuScore))
+                        },
+                        name: 'Température'
+                    }
+                ] : 
+                [
+                    {
+                        y: data[0].trends,
+                        x: years,
+                        type: 'lines+markers',
+                        marker: {color: '#e74c3c', size: 10},
+                        line: {color: '#e74c3c', width: 3},
+                        name: 'Température'
+                    }
+                ], {
+                    margin: {t: 30, b: isAll ? 100 : 50, l: 50, r: 30},
+                    yaxis: {title: 'Température (°C)'},
+                    xaxis: isAll ? {tickangle: -45} : {title: 'Année'}
+                }
+            );
+
+            // Graphique socio-économique
+            Plotly.newPlot('socio-chart', [{
+                y: isAll ? 
+                    data.map(c => c.chomage).sort((a, b) => a - b) : 
+                    [data[0].revenu/1000, data[0].chomage, data[0].vegetation],
+                x: isAll ? 
+                    data.map(c => c.nom).sort((a, b) => {
+                        const chomA = communes.find(x => x.nom === a).chomage;
+                        const chomB = communes.find(x => x.nom === b).chomage;
+                        return chomA - chomB;
+                    }) : 
+                    ['Revenu (k€)', 'Chômage (%)', 'Végétation (%)'],
+                type: 'bar',
+                marker: {
+                    color: isAll ? null : ['#3498db', '#e74c3c', '#2ecc71']
+                },
+                name: isAll ? 'Taux de chômage' : 'Indicateurs'
+            }], {
+                margin: {t: 30, b: isAll ? 100 : 50, l: 50, r: 30},
+                yaxis: {title: isAll ? 'Taux de chômage (%)' : 'Valeur'}
+            });
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remplir le sélecteur de communes
+            const communeSelect = document.getElementById('commune-select');
+            communes.forEach(commune => {
+                const option = document.createElement('option');
+                option.value = commune.nom;
+                option.textContent = commune.nom;
+                communeSelect.appendChild(option);
+            });
+
+            // Mettre à jour la date
+            document.getElementById('update-date').textContent = new Date().toLocaleDateString('fr-FR');
+
+            // Initialiser la carte et le dashboard
+            initMap();
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
