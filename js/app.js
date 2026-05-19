@@ -1,3 +1,30 @@
+/* ===== NAVBAR ===== */
+(function () {
+  const navbar   = document.getElementById('navbar');
+  const toggle   = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  const icon     = document.getElementById('navIcon');
+
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  toggle && toggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+    icon.className = isOpen ? 'bx bx-x' : 'bx bx-menu';
+  });
+
+  navLinks && navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      icon.className = 'bx bx-menu';
+    });
+  });
+})();
+
+/* ===== SKILL TOGGLE ===== */
 document.addEventListener("click", function(e){
   const btn = e.target.closest(".skill-toggle");
   if(!btn) return;
@@ -23,6 +50,8 @@ document.addEventListener("click", function(e){
 (function () {
   const CARTES = [
     "Analyse surface urbaine te forestiere.png",
+    "Normalisation EPCI.jpg",
+    "Normalisation PACA.jpg",
     "Carte bivariée Marseille.png",
     "Carte bivariée.jpg",
     "Carte de prédition.png",
@@ -147,6 +176,22 @@ const documents = [
     description: "Tableau de bord interactif"
   },
   {
+    id: 15,
+    titre: "Résilience territoriale PACA – Mobilité & Économie",
+    fichier: "site_resilience_paca_complet.html",
+    lien: "site_resilience_paca_complet.html",
+    categorie: "dashboard",
+    description: "Dashboard interactif cartographiant la résilience territoriale en PACA : mobilité, accessibilité et indicateurs économiques par commune"
+  },
+  {
+    id: 16,
+    titre: "Dashboard IRVE – Infrastructures de Recharge en Île-de-France",
+    fichier: "site IRVE/index.html",
+    lien: "site IRVE/index.html",
+    categorie: "dashboard",
+    description: "Tableau de bord interactif sur le déploiement des bornes de recharge pour véhicules électriques en Île-de-France"
+  },
+  {
     id: 7,
     titre: "Dossier SIG niveau avancé",
     fichier: "dossier a rendre sig niveau avancé.pdf",
@@ -213,19 +258,22 @@ function afficherDocuments(filtre = 'memoire') {
     ? documents 
     : documents.filter(doc => doc.categorie === filtre);
 
-  container.innerHTML = docsFiltres.map(doc => `
+  container.innerHTML = docsFiltres.map(doc => {
+    const lien = doc.lien || `docs/${doc.fichier}`;
+    return `
     <div class="doc-card">
       <h3>${doc.titre}</h3>
       <p>${doc.description}</p>
       <div class="doc-actions">
-        ${doc.fichier.endsWith('.html') 
-          ? `<a href="docs/${doc.fichier}" class="button" target="_blank">Ouvrir</a>`
-          : `<a href="docs/${doc.fichier}" class="button" target="_blank">Voir</a>`
+        ${doc.fichier.endsWith('.html')
+          ? `<a href="${lien}" class="button" target="_blank">Ouvrir</a>`
+          : `<a href="${lien}" class="button" target="_blank">Voir</a>`
         }
-        <a href="docs/${doc.fichier}" class="button" download>Télécharger</a>
+        <a href="${lien}" class="button" download>Télécharger</a>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // Gestion des filtres

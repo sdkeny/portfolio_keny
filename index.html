@@ -1,256 +1,278 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>mon portfolio</title>
-    <meta type="description" content="C'est mon portfolio" />
-    <link rel="stylesheet" href="styles/styles.css" type="text/css">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  </head>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portfolio de Séverain Désiré Keny — Géomaticien, Cartographe & Data Analyst SIG spécialisé en analyse spatiale, WebSIG et transition énergétique." />
+    <title>Séverain Désiré Keny — Géomaticien & Data Analyst SIG</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  </head>
 
   <body>
-    
-    <section class="hero">
-  <div class="hero-content">
-    <p class="hero-label">JE SUIS</p>
-    <h1 class="hero-title">SEVERAIN DESIRE KENY</h1>
-    <p class="hero-subtitle">Géomaticien & Data Analyst SIG</p>
-    
-    <p class="hero-description">
-      Passionné par la géomatique et la modélisation spatiale, je transforme les données territoriales 
-en outils décisionnels. Webmapping, cartographie interactive, analyse spatiale, télédétection, 
-diagnostic territorial, analyse d'accessibilité : je mobilise ces compétences pour rendre 
-l'information géographique exploitable et faciliter la compréhension des dynamiques spatiales.
-    </p>
-   
-      <a href="docs/cv_keny.pdf" class="btn-primary" download>
-        Télécharger mon CV
-      </a>
-      <div class="hero-social">
-        <a href="https://www.linkedin.com/in/séverain-désiré-keny-8836b3290" target="_blank" aria-label="LinkedIn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-          </svg>
-        </a>
-        </a>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner boxed">
+        <a class="nav-logo" href="#top">SDK</a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#apropos">À propos</a></li>
+          <li><a href="#competences">Compétences</a></li>
+          <li><a href="#stage">Stage</a></li>
+          <li><a href="#travaux">Travaux</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false">
+          <i class="bx bx-menu" id="navIcon"></i>
+        </button>
       </div>
-    </div>
-  </div>
-    <!-- Photo -->
-  <div class="hero-photo">
-    <img src="img/profil.jpeg" alt="Séverain Désiré Keny">
-  </div>
+    </nav>
 
-</div>
-</section>
-        <div class="section">
-          <div class="boxed">
-            <div class="flex">
-              <div class="w40">
-                  <h2>A propos de moi</h2>
-        </div>
-        <div class="w60">
-                <p>Je suis étudiant en Master 2 Géomatique et Modélisation Spatiale à Aix-Marseille Université. Formé à l’analyse spatiale, au traitement de données géographiques et à la cartographie d’aide à la décision, je travaille sur des projets territoriaux et environnementaux à partir de données multi-sources. J’utilise les outils SIG, la programmation Python et des solutions Web-SIG pour produire des cartes, des indicateurs et des analyses destinées à des usages opérationnels. Mon objectif est de transformer des données complexes en supports clairs, utiles et exploitables pour l’aménagement et la gestion des territoires.</p>
-      </div>
-    </div>
-    <div class="section-separator-apropos"></div>
-    <div class="section dark">
-          <div class="boxed text-center">
-            <h2>Découvrez mes compétences</h2>
-            <div class="flex gap20">
-           <div class="w25 skill">
-  <img src="img/icon python.webp">
-  <h3>Automatisation SIG et géotraitement</h3>
-
-  <!-- TEXTE COURT (visible) -->
-  <p class="skill-short">
-    Je conçois des scripts et des workflows pour automatiser les traitements SIG
-    et fiabiliser la production.
-  </p>
-
-  <!-- TEXTE LONG (caché au départ) -->
-  <div class="skill-more">
-    <p>
-      L’objectif est double : fiabiliser les résultats et réduire fortement le temps
-      de production, notamment dans des contextes d’analyse territoriale ou environnementale.
-    </p>
-    <p>
-      Je porte une attention particulière à la reproductibilité des traitements,
-      à la traçabilité des données et à la clarté des scripts.
-      Outils mobilisés : Python (GeoPandas, Pandas), PostGIS, traitements batch, QGIS.
-    </p>
-  </div>
-
-  <!-- BOUTON (pas un lien href="#") -->
-  <button type="button" class="button skill-toggle">En savoir plus…</button>
-</div>
-            <div class="w25 skill">
-  <img src="img/spatial-analyse.jpg" alt="Analyse spatiale">
-  <h3>Analyse spatiale et diagnostics territoriaux</h3>
-
-  <p class="skill-short">
-    Analyses spatiales avancées pour caractériser des dynamiques territoriales et produire des diagnostics utiles à la décision.
-  </p>
-
-  <div class="skill-more">
-    <p>
-      Ces analyses mobilisent l’analyse multicritère, la statistique spatiale et la lecture croisée de phénomènes
-      (environnement, risques, socio-économie, urbanisme). L’objectif est de sortir des résultats lisibles et défendables,
-      pas juste des cartes “jolies”.
-    </p>
-    <p>
-      Je veille à expliciter les hypothèses, les limites et les choix méthodologiques afin de garder une analyse solide.
-      Outils : QGIS, ArcGIS Pro, Python, bases de données spatiales.
-    </p>
-  </div>
-
-  <button type="button" class="button skill-toggle">En savoir plus…</button>
-</div>
-
-<div class="w25 skill">
-  <img src="img/teledetection.jpg" alt="Télédétection">
-  <h3>Télédétection et dynamiques environnementales</h3>
-
-  <p class="skill-short">
-    Exploitation d’images satellites pour analyser la végétation, les feux, les îlots de chaleur et les changements dans le temps.
-  </p>
-
-  <div class="skill-more">
-    <p>
-      Je travaille sur des images optiques et thermiques (Sentinel, Landsat) pour calculer et interpréter des indices
-      (NDVI, NDBI, LST, etc.), construire des séries temporelles et détecter des évolutions significatives.
-    </p>
-    <p>
-      Une attention particulière est portée à la qualité des données (nuages, périodes, cohérence) et à la cohérence
-      entre résultats et contexte terrain. Données et outils : Sentinel, Landsat, Google Earth Engine, Python.
-    </p>
-  </div>
-
-  <button type="button" class="button skill-toggle">En savoir plus…</button>
-</div>
-
-<div class="w25 skill">
-  <img src="img/sigweb.webp" alt="WebSIG">
-  <h3>WebSIG, DataWebSIG et visualisation</h3>
-
-  <p class="skill-short">
-    Conception d’applications cartographiques et de tableaux de bord pour rendre les données spatiales accessibles et exploitables.
-  </p>
-
-  <div class="skill-more">
-    <p>
-      Je développe des interfaces orientées utilisateur : cartes interactives, filtres, légendes dynamiques,
-      couches thématiques, indicateurs et visualisations. Le but est de transformer une analyse en outil utilisable.
-    </p>
-    <p>
-      Je travaille aussi sur la structuration des données (formats, cohérence, organisation) pour faciliter la mise à jour
-      et l’évolution du projet. Technologies : Leaflet, Django, SQL, WebSIG, dashboards.
-    </p>
-  </div>
-
-  <button type="button" class="button skill-toggle">En savoir plus…</button>
-</div>
-      </div>
-</div>
-
-<div class="section-separator"></div>
-
-  
-<div class="section section-cartes" id="travaux">
-  <div class="boxed text-center">
-    <h2>Mes cartes réalisées</h2>
-    <p>Vignettes + aperçu + téléchargement.</p>
-
-    <!-- Galerie cartes (remplie en JS) -->
-    <div id="galleryCartes" class="gallery-grid"></div>
-
-    <hr class="sep">
-
-<div class="section section-docs">
-  <div class="boxed text-center">
-    <h2>Mes documents</h2>
-    <p>Rapports, mémoires et productions SIG, consultables et téléchargeables.</p>
-
-    <!-- Thèmes (sans "Tous") -->
-    <div class="docs-filters">
-      <button class="filter-btn active" data-filter="memoire">Mémoires</button>
-      <button class="filter-btn" data-filter="analyse">Analyses</button>
-      <button class="filter-btn" data-filter="sig">SIG / Cartographie</button>
-      <button class="filter-btn" data-filter="dashboard">Dashboards</button>
-    </div>
-
-    <!-- Liste des documents -->
-    <div id="docsList" class="docs-list"></div>
-  </div>
-</div>
-
-<!-- Modal simple pour voir une carte en grand -->
-<div class="modal" id="imgModal" aria-hidden="true">
-  <div class="modal-content">
-    <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
-    <h3 id="modalTitle"></h3>
-    <img id="modalImg" alt="" />
-    <div class="modal-actions">
-      <a id="modalDownload" class="button" download>Télécharger</a>
-      <button id="modalClose2" class="button">Fermer</button>
-    </div>
-  </div>
-</div>
-<section class="section section-contact" id="contact">
-  <div class="boxed">
-    <div class="contact-head text-center">
-      <span class="contact-kicker">RESTONS EN LIEN</span>
-      <h2 class="contact-title">Contact</h2>
-      <p class="contact-subtitle">
-        Une question, un projet, un stage ? Je réponds rapidement.
-      </p>
-    </div>
-
-    <div class="contact-grid">
-      <!-- Email -->
-      <a class="contact-card" href="mailto:sevarainkeny@gmail.com" aria-label="Envoyer un email">
-        <div class="contact-icon">
-          <i class="bx bx-envelope"></i>
-        </div>
-        <div class="contact-content">
-          <h3>Email</h3>
-          <p class="contact-value">sevarainkeny@gmail.com</p>
-          <span class="contact-cta">Écrire un message</span>
-        </div>
-      </a>
-
-      <!-- Téléphone -->
-      <a class="contact-card" href="tel:+33751571554" aria-label="Appeler">
-        <div class="contact-icon">
-          <i class="bx bx-phone"></i>
-        </div>
-        <div class="contact-content">
-          <h3>Téléphone</h3>
-          <p class="contact-value">07 51 57 15 54</p>
-          <span class="contact-cta">Appeler maintenant</span>
-        </div>
-      </a>
-
-      <!-- LinkedIn -->
-      <a class="contact-card" href="https://www.linkedin.com/in/séverain-désiré-keny-8836b3290" target="_blank" rel="noopener" aria-label="Voir LinkedIn">
-        <div class="contact-icon">
-          <i class="bx bxl-linkedin"></i>
-        </div>
-        <div class="contact-content">
-          <h3>LinkedIn</h3>
-          <p class="contact-value">severain-desire-keny</p>
-          <span class="contact-cta">Voir le profil</span>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-            </div>
-          <div>
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="top">
+      <div class="hero-inner boxed">
+        <div class="hero-content">
+          <p class="hero-label">JE SUIS</p>
+          <h1 class="hero-title">SÉVERAIN<br>DÉSIRÉ KENY</h1>
+          <p class="hero-subtitle">Géomaticien &amp; Data Analyst SIG</p>
+          <p class="hero-description">
+            Passionné par la géomatique et la modélisation spatiale, je transforme les données territoriales
+            en outils décisionnels. Webmapping, cartographie interactive, analyse spatiale, télédétection,
+            diagnostic territorial, analyse d'accessibilité, mobilité : je mobilise ces compétences pour rendre
+            l'information géographique exploitable et faciliter la compréhension des dynamiques spatiales.
+          </p>
+          <div class="hero-actions">
+            <a href="docs/CV.pdf" class="btn-primary" download>
+              <i class="bx bx-download"></i>&nbsp;Télécharger mon CV
+            </a>
+            <a href="https://www.linkedin.com/in/séverain-désiré-keny-8836b3290" target="_blank" rel="noopener" class="btn-outline">
+              <i class="bx bxl-linkedin"></i>&nbsp;LinkedIn
+            </a>
           </div>
-  </body>
+        </div>
+        <div class="hero-photo">
+          <img src="img/profil.jpeg" alt="Séverain Désiré Keny — Géomaticien">
+        </div>
+      </div>
+    </section>
 
-  <script src="js/app.js"></script>
+    <!-- ===== À PROPOS ===== -->
+    <section class="section section-apropos" id="apropos">
+      <div class="boxed">
+        <div class="apropos-grid">
+          <div class="apropos-left">
+            <span class="section-kicker">QUI SUIS-JE</span>
+            <h2>À propos<br>de moi</h2>
+          </div>
+          <div class="apropos-right">
+            <p>Géomaticien, Cartographe et Développeur SIG-Web, formé à l'analyse spatiale, au traitement de données géographiques et à la cartographie d'aide à la décision, je travaille sur des projets territoriaux et environnementaux à partir de données multi-sources. J'utilise les outils SIG, la programmation Python et des solutions Web-SIG pour produire des cartes, des indicateurs et des analyses destinées à des usages opérationnels. Sensible aux enjeux de transition énergétique, j'ai orienté une partie de mes travaux sur l'analyse d'impact environnemental et l'évaluation du déploiement d'infrastructures sur le territoire. Mon objectif est de transformer des données complexes en supports clairs, utiles et exploitables pour l'aménagement du territoire, la gestion de l'environnement, la planification urbaine, le développement durable et la prise de décision au service des collectivités et des acteurs du territoire.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== COMPÉTENCES ===== -->
+    <section class="section section-competences" id="competences">
+      <div class="boxed text-center">
+        <span class="section-kicker section-kicker-light">EXPERTISES</span>
+        <h2>Découvrez mes compétences</h2>
+        <div class="skills-grid">
+
+          <div class="skill">
+            <img src="img/icon python.webp" alt="Python SIG">
+            <h3>Automatisation SIG et géotraitement</h3>
+            <p class="skill-short">Je conçois des scripts et des workflows pour automatiser les traitements SIG et fiabiliser la production.</p>
+            <div class="skill-more">
+              <p>L'objectif est double : fiabiliser les résultats et réduire fortement le temps de production, notamment dans des contextes d'analyse territoriale ou environnementale.</p>
+              <p>Je porte une attention particulière à la reproductibilité des traitements, à la traçabilité des données et à la clarté des scripts. Outils mobilisés : Python (GeoPandas, Pandas), PostGIS, traitements batch, QGIS.</p>
+            </div>
+            <button type="button" class="button skill-toggle">En savoir plus…</button>
+          </div>
+
+          <div class="skill">
+            <img src="img/spatial-analyse.jpg" alt="Analyse spatiale">
+            <h3>Analyse spatiale et diagnostics territoriaux</h3>
+            <p class="skill-short">Analyses spatiales avancées pour caractériser des dynamiques territoriales et produire des diagnostics utiles à la décision.</p>
+            <div class="skill-more">
+              <p>Ces analyses mobilisent l'analyse multicritère, la statistique spatiale et la lecture croisée de phénomènes (environnement, risques, socio-économie, urbanisme). L'objectif est de sortir des résultats lisibles et défendables.</p>
+              <p>Je veille à expliciter les hypothèses, les limites et les choix méthodologiques afin de garder une analyse solide. Outils : QGIS, ArcGIS Pro, Python, bases de données spatiales.</p>
+            </div>
+            <button type="button" class="button skill-toggle">En savoir plus…</button>
+          </div>
+
+          <div class="skill">
+            <img src="img/teledetection.jpg" alt="Télédétection">
+            <h3>Télédétection et dynamiques environnementales</h3>
+            <p class="skill-short">Exploitation d'images satellites pour analyser la végétation, les feux, les îlots de chaleur et les changements dans le temps.</p>
+            <div class="skill-more">
+              <p>Je travaille sur des images optiques et thermiques (Sentinel, Landsat) pour calculer et interpréter des indices (NDVI, NDBI, LST, etc.), construire des séries temporelles et détecter des évolutions significatives.</p>
+              <p>Une attention particulière est portée à la qualité des données et à la cohérence entre résultats et contexte terrain. Données et outils : Sentinel, Landsat, Google Earth Engine, Python.</p>
+            </div>
+            <button type="button" class="button skill-toggle">En savoir plus…</button>
+          </div>
+
+          <div class="skill">
+            <img src="img/sigweb.webp" alt="WebSIG">
+            <h3>WebSIG, DataWebSIG et visualisation</h3>
+            <p class="skill-short">Conception d'applications cartographiques et de tableaux de bord pour rendre les données spatiales accessibles et exploitables.</p>
+            <div class="skill-more">
+              <p>Je développe des interfaces orientées utilisateur : cartes interactives, filtres, légendes dynamiques, couches thématiques, indicateurs et visualisations.</p>
+              <p>Je travaille aussi sur la structuration des données (formats, cohérence, organisation) pour faciliter la mise à jour et l'évolution du projet. Technologies : Leaflet, Django, SQL, WebSIG, dashboards.</p>
+            </div>
+            <button type="button" class="button skill-toggle">En savoir plus…</button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STAGE EN COURS ===== -->
+    <section class="section section-stage" id="stage">
+      <div class="boxed">
+        <div class="stage-header">
+          <span class="stage-kicker">&#x25CF;&nbsp;STAGE EN COURS &middot; 2025</span>
+          <h2 class="stage-main-title">Analyse Géospatiale des IRVE<br>en Île-de-France</h2>
+          <p class="stage-main-sub">Évaluation de la distribution des Infrastructures de Recharge pour Véhicules Électriques</p>
+          <p class="stage-tool-name">Outil d'aide à la décision — <strong>IRVE Analytica</strong></p>
+        </div>
+        <div class="stage-body">
+          <h3 class="stage-missions-label">Missions principales</h3>
+          <ul class="stage-missions-list">
+            <li>
+              <span class="stage-bullet"></span>
+              Collecte, structuration et traitement de données géographiques multi-sources relatives aux mobilités et infrastructures de transport en Île-de-France
+            </li>
+            <li>
+              <span class="stage-bullet"></span>
+              Analyse spatiale de la distribution territoriale et identification de zones sous-desservies selon des critères d'accessibilité et d'usage
+            </li>
+            <li>
+              <span class="stage-bullet"></span>
+              Développement d'un outil SIG d'aide à la décision pour l'évaluation et l'optimisation du déploiement territorial des IRVE
+            </li>
+            <li>
+              <span class="stage-bullet"></span>
+              Cartographie thématique et production de visualisations interactives (tableau de bord IRVE Analytica) pour l'analyse des densités et lacunes territoriales
+            </li>
+            <li>
+              <span class="stage-bullet"></span>
+              Intégration et validation de données open data (AFIREV, ENEDIS, INSEE) pour une analyse multi-sources cohérente à l'échelle régionale
+            </li>
+            <li>
+              <span class="stage-bullet"></span>
+              Rédaction de synthèses cartographiques et de rapports d'analyse à destination des décideurs et acteurs de la mobilité durable
+            </li>
+          </ul>
+          <div class="stage-tags">
+            <span class="stage-tag">Python</span>
+            <span class="stage-tag">GeoPandas</span>
+            <span class="stage-tag">QGIS</span>
+            <span class="stage-tag">ArcGIS Pro</span>
+            <span class="stage-tag">Leaflet</span>
+            <span class="stage-tag">PostGIS</span>
+            <span class="stage-tag">SQL</span>
+            <span class="stage-tag">Statistique spatiale</span>
+            <span class="stage-tag">Open Data</span>
+            <span class="stage-tag">WebSIG</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CARTES RÉALISÉES ===== -->
+    <section class="section section-cartes" id="travaux">
+      <div class="boxed text-center">
+        <span class="section-kicker">PRODUCTIONS</span>
+        <h2>Mes cartes réalisées</h2>
+        <div id="galleryCartes" class="gallery-grid"></div>
+        <hr class="sep">
+      </div>
+    </section>
+
+    <!-- ===== DOCUMENTS ===== -->
+    <section class="section section-docs">
+      <div class="boxed text-center">
+        <span class="section-kicker section-kicker-light">RESSOURCES</span>
+        <h2>Mes documents</h2>
+        <p>Rapports, mémoires et productions SIG, consultables et téléchargeables.</p>
+        <div class="docs-filters">
+          <button class="filter-btn active" data-filter="memoire">Mémoires</button>
+          <button class="filter-btn" data-filter="analyse">Analyses</button>
+          <button class="filter-btn" data-filter="sig">SIG / Cartographie</button>
+          <button class="filter-btn" data-filter="dashboard">Dashboards</button>
+        </div>
+        <div id="docsList" class="docs-list"></div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="section section-contact" id="contact">
+      <div class="boxed">
+        <div class="contact-head text-center">
+          <span class="contact-kicker">RESTONS EN LIEN</span>
+          <h2 class="contact-title">Contact</h2>
+          <p class="contact-subtitle">Une question, un projet, un stage ? Je réponds rapidement.</p>
+        </div>
+        <div class="contact-grid">
+          <a class="contact-card" href="mailto:sevarainkeny@gmail.com" aria-label="Envoyer un email">
+            <div class="contact-icon"><i class="bx bx-envelope"></i></div>
+            <div class="contact-content">
+              <h3>Email</h3>
+              <p class="contact-value">sevarainkeny@gmail.com</p>
+              <span class="contact-cta">Écrire un message</span>
+            </div>
+          </a>
+          <a class="contact-card" href="tel:+33751571554" aria-label="Appeler">
+            <div class="contact-icon"><i class="bx bx-phone"></i></div>
+            <div class="contact-content">
+              <h3>Téléphone</h3>
+              <p class="contact-value">07 51 57 15 54</p>
+              <span class="contact-cta">Appeler maintenant</span>
+            </div>
+          </a>
+          <a class="contact-card" href="https://www.linkedin.com/in/séverain-désiré-keny-8836b3290" target="_blank" rel="noopener" aria-label="Voir LinkedIn">
+            <div class="contact-icon"><i class="bx bxl-linkedin"></i></div>
+            <div class="contact-content">
+              <h3>LinkedIn</h3>
+              <p class="contact-value">severain-desire-keny</p>
+              <span class="contact-cta">Voir le profil</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <div class="footer-inner boxed">
+        <div class="footer-left">
+          <p class="footer-name">Séverain Désiré Keny</p>
+          <p class="footer-role">Géomaticien &amp; Data Analyst SIG</p>
+        </div>
+        <nav class="footer-nav" aria-label="Navigation pied de page">
+          <a href="#apropos">À propos</a>
+          <a href="#competences">Compétences</a>
+          <a href="#stage">Stage</a>
+          <a href="#travaux">Travaux</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <p class="footer-copy">&copy; 2025 SDK</p>
+      </div>
+    </footer>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal" id="imgModal" aria-hidden="true">
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
+        <h3 id="modalTitle"></h3>
+        <img id="modalImg" alt="" />
+        <div class="modal-actions">
+          <a id="modalDownload" class="button" download>Télécharger</a>
+          <button id="modalClose2" class="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
 </html>
