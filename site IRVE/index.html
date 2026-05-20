@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bornes de Recharge Électrique — Île-de-France | IRVE IDF</title>
+  <meta name="description" content="Explorez les 28 839 points de charge en Île-de-France. Carte interactive, statistiques et recherche par commune." />
+  <link rel="stylesheet" href="lib/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#" class="logo" onclick="showTab('accueil');return false;">
+      <span class="logo-icon">⚡</span>
+      <span>IRVE <strong>Île-de-France</strong></span>
+    </a>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="accueil"    onclick="showTab('accueil')">Accueil</button>
+      <button class="tab-btn"        data-tab="carte"      onclick="showTab('carte')">Carte interactive</button>
+      <button class="tab-btn"        data-tab="departements" onclick="showTab('departements')">Départements</button>
+      <button class="tab-btn"        data-tab="recherche"  onclick="showTab('recherche')">Recherche</button>
+      <button class="tab-btn"        data-tab="types"      onclick="showTab('types')">Types de prises</button>
+      <button class="tab-btn"        data-tab="faq"        onclick="showTab('faq')">FAQ</button>
+    </nav>
+    <div class="header-badge">
+      <span class="badge-dot"></span>Mis à jour le 23/04/2026
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ MENU MOBILE ═══════════════ -->
+<div class="mobile-tabs">
+  <button class="tab-btn active" data-tab="accueil"      onclick="showTab('accueil')">Accueil</button>
+  <button class="tab-btn"        data-tab="carte"        onclick="showTab('carte')">Carte</button>
+  <button class="tab-btn"        data-tab="departements" onclick="showTab('departements')">Dép.</button>
+  <button class="tab-btn"        data-tab="recherche"    onclick="showTab('recherche')">Recherche</button>
+  <button class="tab-btn"        data-tab="faq"          onclick="showTab('faq')">FAQ</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 1 — ACCUEIL
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-accueil">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-label">Registre national IRVE · data.gouv.fr</div>
+      <h1>Bornes de recharge électrique<br /><span class="hero-accent">en Île-de-France</span></h1>
+      <p class="hero-sub">Explorez les <strong>28 839 points de charge</strong> répartis dans <strong>844 communes</strong> — données officielles mises à jour automatiquement.</p>
+
+      <div class="search-bar-wrap">
+        <div class="search-bar">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="heroSearch" placeholder="Rechercher une commune, un code postal…" autocomplete="off" />
+          <button class="btn-search" onclick="heroSearchGo()">Rechercher</button>
+        </div>
+        <div class="search-suggestions" id="heroSuggestions"></div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-num" data-target="28839">0</span><span class="hstat-label">Points de charge</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-num" data-target="844">0</span><span class="hstat-label">Communes équipées</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-num" data-target="5401">0</span><span class="hstat-label">Stations</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-num" data-target="8">0</span><span class="hstat-label">Départements</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI CARDS -->
+  <section class="section-light">
+    <div class="container">
+      <div class="section-header"><h2>Vue d'ensemble</h2><p>Indicateurs clés du réseau de recharge francilien</p></div>
+      <div class="stat-grid">
+        <div class="stat-card stat-green">
+          <div class="stat-card-icon">🔌</div>
+          <div class="stat-card-val">28 839</div>
+          <div class="stat-card-label">Points de charge (PDC)</div>
+          <div class="stat-card-sub">dont 25 397 publics · +2 430 vs 23/04/2026</div>
+        </div>
+        <div class="stat-card stat-blue">
+          <div class="stat-card-icon">📍</div>
+          <div class="stat-card-val">5 401</div>
+          <div class="stat-card-label">Stations</div>
+          <div class="stat-card-sub">~5,3 PDC par station</div>
+        </div>
+        <div class="stat-card stat-teal">
+          <div class="stat-card-icon">🏘️</div>
+          <div class="stat-card-val">844 / 1 285</div>
+          <div class="stat-card-label">Communes équipées</div>
+          <div class="stat-card-sub">65,7 % des communes IDF</div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-card-icon">⚡</div>
+          <div class="stat-card-val">22 kW</div>
+          <div class="stat-card-label">Puissance médiane</div>
+          <div class="stat-card-sub">Jusqu'à 1 500 kW disponibles</div>
+        </div>
+        <div class="stat-card stat-orange">
+          <div class="stat-card-icon">🆓</div>
+          <div class="stat-card-val">~96 %</div>
+          <div class="stat-card-label">PDC en accès libre</div>
+          <div class="stat-card-sub">Sans abonnement obligatoire</div>
+        </div>
+        <div class="stat-card stat-pink">
+          <div class="stat-card-icon">⭐</div>
+          <div class="stat-card-val">83 %</div>
+          <div class="stat-card-label">Satisfaction utilisateurs</div>
+          <div class="stat-card-sub">Source : Observatoire AFIREV 2024</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOP 10 -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-header"><h2>Top 10 — Communes les mieux équipées</h2><p>Classées par nombre de points de charge</p></div>
+      <div class="top-grid" id="topGrid"></div>
+    </div>
+  </section>
+
+  <!-- NIVEAUX -->
+  <section class="section-light">
+    <div class="container">
+      <div class="section-header"><h2>Niveaux d'équipement</h2><p>Répartition des communes selon leur densité de bornes</p></div>
+      <div class="niveau-grid">
+        <div class="niveau-card niveau-excellent"><div class="niveau-badge">Excellent</div><div class="niveau-count">468</div><div class="niveau-label">communes</div><div class="niveau-desc">≥ 10 PDC / 10 000 hab</div></div>
+        <div class="niveau-card niveau-bon"><div class="niveau-badge">Bon</div><div class="niveau-count">201</div><div class="niveau-label">communes</div><div class="niveau-desc">5 – 10 PDC / 10 000 hab</div></div>
+        <div class="niveau-card niveau-moyen"><div class="niveau-badge">Moyen</div><div class="niveau-count">123</div><div class="niveau-label">communes</div><div class="niveau-desc">2 – 5 PDC / 10 000 hab</div></div>
+        <div class="niveau-card niveau-faible"><div class="niveau-badge">Faible</div><div class="niveau-count">52</div><div class="niveau-label">communes</div><div class="niveau-desc">0,1 – 2 PDC / 10 000 hab</div></div>
+        <div class="niveau-card niveau-absent"><div class="niveau-badge">Absent</div><div class="niveau-count">441</div><div class="niveau-label">communes</div><div class="niveau-desc">Aucune borne recensée</div></div>
+      </div>
+      <div class="niveau-bar-wrap">
+        <div class="niveau-bar">
+          <div class="nb-seg nb-excellent" style="width:36.4%" title="Excellent : 468 communes"></div>
+          <div class="nb-seg nb-bon"       style="width:15.6%" title="Bon : 201 communes"></div>
+          <div class="nb-seg nb-moyen"     style="width:9.6%"  title="Moyen : 123 communes"></div>
+          <div class="nb-seg nb-faible"    style="width:4.0%"  title="Faible : 52 communes"></div>
+          <div class="nb-seg nb-absent"    style="width:34.3%" title="Absent : 441 communes"></div>
+        </div>
+        <div class="niveau-bar-legend">
+          <span><i class="dot dot-excellent"></i>Excellent 36 %</span>
+          <span><i class="dot dot-bon"></i>Bon 16 %</span>
+          <span><i class="dot dot-moyen"></i>Moyen 10 %</span>
+          <span><i class="dot dot-faible"></i>Faible 4 %</span>
+          <span><i class="dot dot-absent"></i>Absent 34 %</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SATISFACTION & QUALITÉ -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-header"><h2>Satisfaction &amp; Qualité</h2><p>Observatoire AFIREV/AVERE-France 2024 · Baromètre FFAUVE 2025 · Chargemap 2025/2026</p></div>
+      <div class="afirev-grid">
+          <div class="afirev-kpi"><div class="afirev-val">83 %</div><div class="afirev-label">Satisfaction globale</div><div class="afirev-src">tous utilisateurs · AFIREV 2024</div></div>
+          <div class="afirev-kpi"><div class="afirev-val">93 %</div><div class="afirev-label">Utilisateurs fréquents</div><div class="afirev-src">satisfaits · AFIREV 2024</div></div>
+          <div class="afirev-kpi"><div class="afirev-val">85,5 %</div><div class="afirev-label">Taux de réussite</div><div class="afirev-src">des sessions de recharge · AFIREV 2024</div></div>
+          <div class="afirev-kpi"><div class="afirev-val">92 %</div><div class="afirev-label">Disponibilité technique</div><div class="afirev-src">Baromètre FFAUVE 2025</div></div>
+          <div class="afirev-kpi"><div class="afirev-val">89 %</div><div class="afirev-label">Bornes autoroute</div><div class="afirev-src">satisfaction · AFIREV 2024</div></div>
+          <div class="afirev-kpi"><div class="afirev-val">88 %</div><div class="afirev-label">Bornes station-service</div><div class="afirev-src">satisfaction · AFIREV 2024</div></div>
+          <div class="afirev-kpi afirev-warn"><div class="afirev-val">76 %</div><div class="afirev-label">Bornes voirie urbaine</div><div class="afirev-src">&#8595; vs 81 % en 2023 · AFIREV 2024</div></div>
+          <div class="afirev-kpi afirev-warn"><div class="afirev-val">65 %</div><div class="afirev-label">Transparence tarifaire</div><div class="afirev-src">&#8593; vs 59 % en 2023 · AFIREV 2024</div></div>
+      </div>
+      <div class="op-rank-header">
+        <h3>Classement satisfaction — opérateurs IDF</h3>
+        <span class="op-rank-badge">Chargemap 2025/2026 · 433 000+ avis</span>
+      </div>
+      <div class="op-table-wrap">
+        <table class="op-table">
+          <thead><tr><th class="op-th-rank">#</th><th>Opérateur</th><th class="op-th-note">Note /5</th><th class="op-th-cat">Catégorie</th><th class="op-th-pts">Points forts</th></tr></thead>
+          <tbody>
+          <tr><td class="op-rank">1</td><td class="op-nom">Tesla / TESLA France SARL</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:88%"></span></span><strong>4.4</strong></td><td><span class="op-cat cat-excellent">Excellent</span></td><td class="op-pts">Fiabilité, réseau dense, expérience fluide</td></tr>
+          <tr><td class="op-rank">2</td><td class="op-nom">Fastned France</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:86%"></span></span><strong>4.3</strong></td><td><span class="op-cat cat-excellent">Excellent</span></td><td class="op-pts">Rapidité de charge, fiabilité élevée, disponibilité</td></tr>
+          <tr><td class="op-rank">3</td><td class="op-nom">Electra</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:84%"></span></span><strong>4.2</strong></td><td><span class="op-cat cat-excellent">Excellent</span></td><td class="op-pts">Autoroutes, puissance, expérience longue distance</td></tr>
+          <tr><td class="op-rank">4</td><td class="op-nom">Mobilize Power Solutions</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:82%"></span></span><strong>4.1</strong></td><td><span class="op-cat cat-excellent">Excellent</span></td><td class="op-pts">Infrastructure, fiabilité, montée en puissance</td></tr>
+          <tr><td class="op-rank">5</td><td class="op-nom">Atlante France</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:78%"></span></span><strong>3.9</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">Autoroutes (2e 2026), déploiement rapide</td></tr>
+          <tr><td class="op-rank">6</td><td class="op-nom">Allego</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:76%"></span></span><strong>3.8</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">Autoroutes (3e 2026), Europe</td></tr>
+          <tr><td class="op-rank">7</td><td class="op-nom">DRIVECO</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:76%"></span></span><strong>3.8</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">Fiabilité (5e 2025), déploiement territorial</td></tr>
+          <tr><td class="op-rank">8</td><td class="op-nom">R3</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:74%"></span></span><strong>3.7</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">Top 6 exp. globale &amp; qualité infra 2025</td></tr>
+          <tr><td class="op-rank">9</td><td class="op-nom">IONITY / Ionity</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:74%"></span></span><strong>3.7</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">Charge ultra-rapide, réseau autoroutier</td></tr>
+          <tr><td class="op-rank">10</td><td class="op-nom">NW IECharge</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:74%"></span></span><strong>3.7</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">1er qualité-prix 2025, tarifs compétitifs</td></tr>
+          <tr><td class="op-rank">11</td><td class="op-nom">LIDL France</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:74%"></span></span><strong>3.7</strong></td><td><span class="op-cat cat-tresbien">Très bien</span></td><td class="op-pts">4e qualité-prix 2025, accès libre</td></tr>
+          <tr><td class="op-rank">12</td><td class="op-nom">bp Pulse</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:72%"></span></span><strong>3.6</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">3e fiabilité 2026, réseau en expansion</td></tr>
+          <tr><td class="op-rank">13</td><td class="op-nom">Sorel Energies</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:72%"></span></span><strong>3.6</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">Opérateur régional, bon rapport qualité-prix</td></tr>
+          <tr><td class="op-rank">14</td><td class="op-nom">Power Dot France</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:70%"></span></span><strong>3.5</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">10e exp. globale 2025, maillage territorial</td></tr>
+          <tr><td class="op-rank">15</td><td class="op-nom">IZIVIA</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:70%"></span></span><strong>3.5</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">3e qualité-prix 2025, filiale EDF/EDP</td></tr>
+          <tr><td class="op-rank">16</td><td class="op-nom">Bump</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:70%"></span></span><strong>3.5</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">Top 7 exp. globale 2025</td></tr>
+          <tr><td class="op-rank">17</td><td class="op-nom">TotalEnergies Charging</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:70%"></span></span><strong>3.5</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">5e réseau autoroutier 2025, déploiement national</td></tr>
+          <tr><td class="op-rank">18</td><td class="op-nom">TotalEnergies Marketing</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:68%"></span></span><strong>3.4</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">Réseau voirie urbaine, couverture nationale</td></tr>
+          <tr><td class="op-rank">19</td><td class="op-nom">ENGIE Vianeo</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:68%"></span></span><strong>3.4</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">Réseau historique, couverture nationale</td></tr>
+          <tr><td class="op-rank">20</td><td class="op-nom">Plenitude On The Road</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:68%"></span></span><strong>3.4</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">Réseau en développement</td></tr>
+          <tr><td class="op-rank">21</td><td class="op-nom">ELECTRIC 55 CHARGING</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:68%"></span></span><strong>3.4</strong></td><td><span class="op-cat cat-bien">Bien</span></td><td class="op-pts">9e qualité-prix 2025, tarifs attractifs</td></tr>
+          <tr><td class="op-rank">22</td><td class="op-nom">Virta</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:66%"></span></span><strong>3.3</strong></td><td><span class="op-cat cat-satisf">Satisfaisant</span></td><td class="op-pts">Plateforme SaaS, réseau partenaires</td></tr>
+          <tr><td class="op-rank">23</td><td class="op-nom">FRESHMILE</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:64%"></span></span><strong>3.2</strong></td><td><span class="op-cat cat-satisf">Satisfaisant</span></td><td class="op-pts">Opérateur B2B, gestion de flottes</td></tr>
+          <tr><td class="op-rank">24</td><td class="op-nom">Bouygues Energies &amp; Sces</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:64%"></span></span><strong>3.2</strong></td><td><span class="op-cat cat-satisf">Satisfaisant</span></td><td class="op-pts">Opérateur infra, présence Île-de-France</td></tr>
+          <tr><td class="op-rank">25</td><td class="op-nom">EVBOX</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:64%"></span></span><strong>3.2</strong></td><td><span class="op-cat cat-satisf">Satisfaisant</span></td><td class="op-pts">Équipementier, réseau en cours de déploiement</td></tr>
+          <tr><td class="op-rank">26</td><td class="op-nom">SPIE CityNetworks</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:62%"></span></span><strong>3.1</strong></td><td><span class="op-cat cat-satisf">Satisfaisant</span></td><td class="op-pts">Services urbains, contrats collectivités</td></tr>
+          <tr><td class="op-rank">27</td><td class="op-nom">Autres opérateurs locaux</td><td class="op-note"><span class="op-bar-wrap"><span class="op-bar" style="width:58%"></span></span><strong>2.9</strong></td><td><span class="op-cat cat-moyen">Moyen</span></td><td class="op-pts">Opérateurs locaux / émergents</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="op-source">Source : Chargemap 2025/2026 (433 000+ avis · 132 000 utilisateurs) · Observatoire AFIREV/AVERE-France 2024 · Baromètre FFAUVE 2025</p>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 2 — CARTE INTERACTIVE
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-carte">
+
+  <!-- Barre de contrôles -->
+  <div class="map-toolbar">
+    <div class="map-ctrl-group">
+      <span class="map-ctrl-label">Affichage</span>
+      <div class="map-toggle-group">
+        <button class="map-toggle active" id="mapToggleAll"  onclick="setMapMode('all')">Toutes</button>
+        <button class="map-toggle"        id="mapToggleIrve" onclick="setMapMode('irve')">Équipées</button>
+        <button class="map-toggle"        id="mapToggleSans" onclick="setMapMode('sans')">Sans borne</button>
+      </div>
+    </div>
+    <div class="map-ctrl-group">
+      <span class="map-ctrl-label">Couleur</span>
+      <select class="map-select-sm" id="mapColorBy" onchange="updateMapColors()">
+        <option value="niveau">Niveau équip.</option>
+        <option value="dept">Département</option>
+        <option value="pdc">Nb PDC</option>
+        <option value="densite">Densité pop.</option>
+        <option value="revenu">Revenu médian</option>
+      </select>
+    </div>
+    <div class="map-ctrl-group">
+      <span class="map-ctrl-label">Limites</span>
+      <div class="map-toggle-group">
+        <button class="map-toggle active" id="mapToggleDept"    onclick="toggleBorder('dept')">Dép.</button>
+        <button class="map-toggle"        id="mapToggleCommune" onclick="toggleBorder('commune')">Communes</button>
+      </div>
+    </div>
+    <div class="map-ctrl-group">
+      <span class="map-ctrl-label">Département</span>
+      <select class="map-select-sm" id="mapFilterDept" onchange="filterMap()">
+        <option value="">Tous</option>
+        <option value="75">Paris (75)</option>
+        <option value="77">Seine-et-Marne (77)</option>
+        <option value="78">Yvelines (78)</option>
+        <option value="91">Essonne (91)</option>
+        <option value="92">Hauts-de-Seine (92)</option>
+        <option value="93">Seine-Saint-Denis (93)</option>
+        <option value="94">Val-de-Marne (94)</option>
+        <option value="95">Val-d'Oise (95)</option>
+      </select>
+    </div>
+    <div class="map-ctrl-group map-ctrl-search">
+      <span class="map-ctrl-label">Commune</span>
+      <input type="text" class="map-input-sm" id="mapSearch" placeholder="Nom ou CP…" oninput="filterMapSearch()" />
+    </div>
+    <div class="map-stat-inline">
+      <span id="mapStatCount">—</span> communes &nbsp;|&nbsp;
+      <span id="mapStatPDC">—</span> PDC
+    </div>
+  </div>
+
+  <!-- Carte -->
+  <div id="mainMap"></div>
+
+  <!-- Légende flottante -->
+  <div class="map-legend-float" id="mapLegend"></div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 3 — DÉPARTEMENTS
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-departements">
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <div class="section-header"><h2>Répartition par département</h2><p>Cliquez sur un département pour filtrer la recherche</p></div>
+    <div class="dept-grid" id="deptGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 4 — RECHERCHE
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-recherche">
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <div class="section-header"><h2>Recherche par commune</h2><p>Filtrez les 1 285 communes d'Île-de-France</p></div>
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Département</label>
+        <select id="filterDept" onchange="applyFilters()">
+          <option value="">Tous</option>
+          <option value="75">Paris (75)</option>
+          <option value="77">Seine-et-Marne (77)</option>
+          <option value="78">Yvelines (78)</option>
+          <option value="91">Essonne (91)</option>
+          <option value="92">Hauts-de-Seine (92)</option>
+          <option value="93">Seine-Saint-Denis (93)</option>
+          <option value="94">Val-de-Marne (94)</option>
+          <option value="95">Val-d'Oise (95)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Niveau équipement</label>
+        <select id="filterNiveau" onchange="applyFilters()">
+          <option value="">Tous</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Bon">Bon</option>
+          <option value="Moyen">Moyen</option>
+          <option value="Faible">Faible</option>
+          <option value="Absent">Absent</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Classe commune</label>
+        <select id="filterClasse" onchange="applyFilters()">
+          <option value="">Toutes</option>
+          <option value="Urbaine dense">Urbaine dense</option>
+          <option value="Urbaine">Urbaine</option>
+          <option value="Periurbaine">Périurbaine</option>
+          <option value="Rurale">Rurale</option>
+        </select>
+      </div>
+      <div class="filter-group filter-search">
+        <label>Commune ou code postal</label>
+        <input type="text" id="filterText" placeholder="Ex : Versailles, 78000…" oninput="debouncedFilter()" />
+      </div>
+      <button class="btn-reset" onclick="resetFilters()">✕ Réinitialiser</button>
+    </div>
+
+    <div class="table-meta" id="tableMeta">Chargement…</div>
+    <div class="table-wrap">
+      <table class="commune-table" id="communeTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable('commune')">Commune <span class="sort-arrow" id="sort-commune"></span></th>
+            <th onclick="sortTable('dept')">Dép. <span class="sort-arrow" id="sort-dept"></span></th>
+            <th onclick="sortTable('pdc')">PDC <span class="sort-arrow" id="sort-pdc">↓</span></th>
+            <th onclick="sortTable('stations')">Stations <span class="sort-arrow" id="sort-stations"></span></th>
+            <th onclick="sortTable('puiss_max')">Puiss. max <span class="sort-arrow" id="sort-puiss_max"></span></th>
+            <th onclick="sortTable('pct_libre')">Accès libre <span class="sort-arrow" id="sort-pct_libre"></span></th>
+            <th onclick="sortTable('pdc_10k')">PDC/10k hab <span class="sort-arrow" id="sort-pdc_10k"></span></th>
+            <th>Niveau</th>
+          </tr>
+        </thead>
+        <tbody id="communeTableBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+    <div id="ficheZone" class="fiche-zone" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 5 — TYPES DE PRISES
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-types">
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <div class="section-header"><h2>Types de connecteurs</h2><p>Compatibilité avec les principaux standards de recharge</p></div>
+    <div class="connectors-grid">
+      <div class="connector-card">
+        <div class="connector-icon conn-t2">T2</div>
+        <div class="connector-name">Type 2 (Mennekes)</div>
+        <div class="connector-count" id="cnt-t2">—</div>
+        <div class="connector-desc">Standard européen AC. Compatible avec la quasi-totalité des VE du marché.</div>
+        <div class="connector-power">Jusqu'à 22 kW AC</div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon conn-ccs">CCS</div>
+        <div class="connector-name">CCS Combo 2</div>
+        <div class="connector-count" id="cnt-ccs">—</div>
+        <div class="connector-desc">Recharge rapide DC. Standard dominant pour les voitures européennes et américaines.</div>
+        <div class="connector-power">Jusqu'à 1 500 kW DC</div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon conn-chad">CHD</div>
+        <div class="connector-name">CHAdeMO</div>
+        <div class="connector-count" id="cnt-chad">—</div>
+        <div class="connector-desc">Recharge rapide DC. Standard japonais pour Nissan, Mitsubishi.</div>
+        <div class="connector-power">Jusqu'à 100 kW DC</div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon conn-ef">EF</div>
+        <div class="connector-name">Prise EF (domestique)</div>
+        <div class="connector-count" id="cnt-ef">—</div>
+        <div class="connector-desc">Prise standard française (Mode 2). Recharge lente, usage d'appoint.</div>
+        <div class="connector-power">Jusqu'à 3,7 kW AC</div>
+      </div>
+    </div>
+    <div class="power-table-wrap">
+      <h3>Tableau des puissances de recharge</h3>
+      <table class="power-table">
+        <thead><tr><th>Type de borne</th><th>Puissance</th><th>Temps recharge 50 kWh</th><th>Usage typique</th></tr></thead>
+        <tbody>
+          <tr><td>Prise EF (Mode 2)</td><td>2,3 – 3,7 kW</td><td>13 – 22 h</td><td>Domicile, dépannage</td></tr>
+          <tr><td>Borne AC (Type 2)</td><td>7 – 22 kW</td><td>2 – 7 h</td><td>Domicile, parking, travail</td></tr>
+          <tr><td>Borne rapide DC</td><td>50 – 150 kW</td><td>20 – 60 min</td><td>Autoroute, centre commercial</td></tr>
+          <tr><td>Borne ultra-rapide DC</td><td>150 – 1 500 kW</td><td>3 – 20 min</td><td>Corridor autoroutier</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ONGLET 6 — FAQ
+     ═══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-faq">
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <div class="section-header"><h2>Questions fréquentes</h2><p>Tout ce que vous devez savoir sur la recharge électrique en IDF</p></div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Combien y a-t-il de bornes de recharge en Île-de-France ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Au 23 avril 2026, l'Île-de-France compte <strong>28 839 points de charge (PDC)</strong> toutes sources confondues, dont <strong>25 397 PDC publics</strong>, répartis dans <strong>5 401 stations</strong> sur <strong>844 communes</strong>. +2 430 PDC supplémentaires intègrent désormais les PDC réservés (+1 045) et le réseau Gireve (+2 397).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Quels types de connecteurs sont disponibles ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Quatre types : <strong>Type 2 (Mennekes)</strong> pour la recharge AC (standard européen), <strong>CCS Combo 2</strong> pour la recharge rapide DC, <strong>CHAdeMO</strong> pour certains véhicules japonais, et la <strong>prise EF</strong> (prise domestique, recharge lente).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Les bornes sont-elles accessibles librement ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Environ <strong>96 % des PDC franciliens sont en accès libre</strong>, sans abonnement obligatoire. La plupart acceptent un paiement par carte bancaire ou via application mobile.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Quelle est la puissance disponible ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a">La puissance médiane est de <strong>22 kW</strong> (recharge AC standard). Les bornes ultra-rapides DC peuvent atteindre <strong>1 500 kW</strong> (Tigery, Essonne). Moins de 10 % des PDC dépassent 50 kW.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Quels sont les principaux opérateurs ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a"><strong>TotalEnergies Charging Services</strong>, <strong>Bouygues Energies &amp; Services</strong>, <strong>IZIVIA</strong>, <strong>Electra</strong>, <strong>Bump</strong> et <strong>SPIE CityNetworks</strong> sont les principaux opérateurs en IDF.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">D'où proviennent ces données ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Ces données sont issues du <strong>Registre national IRVE</strong>, publié en open data sur <a href="https://www.data.gouv.fr" target="_blank" rel="noopener">data.gouv.fr</a>. Elles sont enrichies par des données socio-démographiques INSEE. Mise à jour automatique chaque lundi matin.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Comment est calculé le niveau d'équipement ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a"><strong>Excellent</strong> ≥ 10 PDC/10k hab · <strong>Bon</strong> : 5–10 · <strong>Moyen</strong> : 2–5 · <strong>Faible</strong> : 0,1–2 · <strong>Absent</strong> : aucune borne.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Pourquoi certaines communes n'ont-elles aucune borne ?<span class="faq-arrow">▾</span></button>
+        <div class="faq-a"><strong>441 communes</strong> (34 %) n'ont aucun PDC recensé — principalement des communes rurales de Seine-et-Marne. Leur équipement dépend des politiques locales et des projets France 2030.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand"><span class="logo-icon">⚡</span> IRVE Île-de-France</div>
+    <div class="footer-links">
+      <a href="https://www.data.gouv.fr" target="_blank" rel="noopener">data.gouv.fr</a>
+      <a href="#" onclick="showTab('accueil');return false;">Accueil</a>
+      <a href="#" onclick="showTab('carte');return false;">Carte</a>
+      <a href="#" onclick="showTab('faq');return false;">FAQ</a>
+    </div>
+    <div class="footer-note">Source : Registre national IRVE + Gireve · Données au 23 avril 2026 · Fichier mis à jour le 28 avril 2026</div>
+  </div>
+</footer>
+
+<script src="lib/leaflet.js"></script>
+<script src="lib/depts_idf.js"></script>
+<script src="lib/communes_idf.js"></script>
+<script src="lib/pdc_detail.js"></script>
+<script src="data_embed.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
